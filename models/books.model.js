@@ -25,6 +25,7 @@ const bookSchema = new mongoose.Schema({
     minlength: [3, 'Author name must be at least 3 characters'],
     maxlength: [50, 'Author name must be less than 50 characters']
   },
+  photo: String,
 }, { timestamps: true });
 
 module.exports = mongoose.model('Book', bookSchema);

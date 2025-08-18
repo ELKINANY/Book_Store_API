@@ -28,6 +28,7 @@ const {
 } = require('../utils/validation/authValidation');
 const validatorMiddleware = require('../middlewares/validatorMiddleware');
 const { protect, allowedTo } = require('../middlewares/auth.middleware');
+const uploadImage = require('../middlewares/uploadImage');
 
 // Auth routes
 router.post('/register', registerValidator, validatorMiddleware, register);
@@ -42,6 +43,20 @@ router.post('/reset-password', resetPasswordValidator, validatorMiddleware, rese
 router.get('/my-profile', protect, getLoggedUser);
 router.put('/update-me', protect, updateUserValidator, validatorMiddleware, updateLoggedUser);
 router.delete('/delete-me', protect, deleteLoggedUser);
+
+// User image upload
+router.put('/upload-photo', protect, uploadImage, async (req, res, next) => {
+  if (!req.file) {
+    return res.status(400).json({ message: 'No image uploaded' });
+  }
+  const User = require('../models/user.model');
+  const updatedUser = await User.findByIdAndUpdate(
+    req.user._id,
+    { photo: req.file.filename },
+    { new: true }
+  );
+  res.status(200).json({ data: updatedUser });
+});
 
 // Admin user management routes
 router.get('/', protect, allowedTo('admin'), getAllUsers);

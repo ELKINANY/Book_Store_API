@@ -98,8 +98,3 @@ Body: form-data, key=image, value=<your image file>
 ## Notes
 - You must send the token in the header `Authorization: Bearer <token>` for protected routes
 - All responses are in JSON format
-
----
-
-## Contact
-لأي استفسار أو دعم، تواصل مع المطور.

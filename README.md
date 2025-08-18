@@ -1,71 +1,90 @@
+
 # BookStore API Documentation
 
 ## Overview
-BookStore API هو نظام لإدارة المؤلفين والكتب والمستخدمين مع صلاحيات متعددة (أدمن، مؤلف، مستخدم عادي). يوفر عمليات CRUD، تسجيل الدخول، واستعادة كلمة المرور، مع حماية JWT وصلاحيات متقدمة.
+BookStore API is a system for managing authors, books, and users with multiple roles (admin, author, regular user). It provides CRUD operations, authentication, password reset, JWT protection, and advanced role-based access.
 
 ---
 
 ## Authentication & User Management
 
+
 ### Auth Endpoints
-- `POST /api/auth/register` — تسجيل مستخدم جديد
-- `POST /api/auth/login` — تسجيل الدخول
-- `POST /api/auth/forgot-password` — إرسال كود استعادة كلمة المرور
-- `POST /api/auth/verify-reset-code` — تحقق من كود الاستعادة
-- `POST /api/auth/reset-password` — إعادة تعيين كلمة المرور
+- `POST /api/v1/auth/register` — Register a new user
+- `POST /api/v1/auth/login` — User login
+- `POST /api/v1/auth/forgot-password` — Send password reset code
+- `POST /api/v1/auth/verify-reset-code` — Verify reset code
+- `POST /api/v1/auth/reset-password` — Reset password
+
 
 ### User Profile
-- `GET /api/auth/my-profile` — جلب بيانات المستخدم الحالي
-- `PUT /api/auth/update-me` — تعديل بيانات المستخدم الحالي
-- `DELETE /api/auth/delete-me` — حذف حساب المستخدم الحالي
+- `GET /api/v1/auth/my-profile` — Get current user profile
+- `PUT /api/v1/auth/update-me` — Update current user profile
+- `DELETE /api/v1/auth/delete-me` — Delete current user account
+- `PUT /api/v1/auth/upload-photo` — Upload/change user profile photo
+
 
 ### Admin User Management
-- `GET /api/auth/` — جلب كل المستخدمين (أدمن فقط)
-- `GET /api/auth/:id` — جلب مستخدم محدد
-- `DELETE /api/auth/:id` — حذف مستخدم (أدمن فقط)
+- `GET /api/v1/auth/` — Get all users (admin only)
+- `GET /api/v1/auth/:id` — Get specific user
+- `DELETE /api/v1/auth/:id` — Delete user (admin only)
 
 ---
 
 ## Author Management
 
-### Author Profile (للمؤلف المسجل دخول)
-- `GET /api/authors/me` — جلب بيانات المؤلف الحالي
-- `PUT /api/authors/update-me` — تعديل بيانات المؤلف الحالي
-- `DELETE /api/authors/delete-me` — حذف حساب المؤلف الحالي
+
+### Author Profile (Logged-in Author)
+- `GET /api/v1/authors/me` — Get current author profile
+- `PUT /api/v1/authors/update-me` — Update current author profile
+- `DELETE /api/v1/authors/delete-me` — Delete current author account
+- `PUT /api/v1/authors/:id/upload-photo` — Upload/change author profile photo
+
 
 ### Admin Author Management
-- `POST /api/authors/` — إضافة مؤلف جديد (أدمن فقط)
-- `GET /api/authors/` — جلب كل المؤلفين (أدمن فقط)
-- `GET /api/authors/:id` — جلب مؤلف محدد (أدمن فقط)
-- `PUT /api/authors/:id` — تعديل مؤلف (أدمن فقط)
-- `DELETE /api/authors/:id` — حذف مؤلف (أدمن فقط)
+- `POST /api/v1/authors/` — Add new author (admin only)
+- `GET /api/v1/authors/` — Get all authors (admin only)
+- `GET /api/v1/authors/:id` — Get specific author (admin only)
+- `PUT /api/v1/authors/:id` — Update author (admin only)
+- `DELETE /api/v1/authors/:id` — Delete author (admin only)
 
 ---
 
+
 ## Books Management
 
-- `POST /api/books/` — إضافة كتاب جديد (أدمن أو مؤلف)
-- `GET /api/books/` — جلب كل الكتب
-- `GET /api/books/:id` — جلب كتاب محدد
-- `PUT /api/books/:id` — تعديل كتاب (أدمن أو مؤلف)
-- `DELETE /api/books/:id` — حذف كتاب (أدمن أو مؤلف)
+- `POST /api/v1/books/` — Add new book (admin or author)
+- `GET /api/v1/books/` — Get all books
+- `GET /api/v1/books/:id` — Get specific book
+- `PUT /api/v1/books/:id` — Update book (admin or author)
+- `DELETE /api/v1/books/:id` — Delete book (admin or author)
+- `PUT /api/v1/books/:id/upload-photo` — Upload/change book cover image
+
+---
+
+## Image Uploads
+- Images are uploaded using endpoints like `/api/v1/auth/upload-photo`, `/api/v1/books/:id/upload-photo`, `/api/v1/authors/:id/upload-photo`.
+- Use `form-data` with the field name `image`.
+- Uploaded images are stored in the `uploads` folder and can be accessed via direct URL.
+
+**Example request (using Postman):**
+```
+PUT /api/books/:id/upload-photo
+Headers: Authorization: Bearer <token>
+Body: form-data, key=image, value=<your image file>
+```
 
 ---
 
 ## Middlewares
-- حماية JWT لجميع المسارات الخاصة
-- صلاحيات الوصول عبر دالة `allowedTo`
-- تحقق من صحة البيانات عبر Validators
+- JWT protection for all private routes
+- Role-based access control using `allowedTo`
+- Data validation using Validators
 
 ---
 
 ## Error Handling
-- جميع الأخطاء ترجع بصيغة JSON مع رسالة الخطأ وكود الحالة
-
----
-
-## Uploads
-- رفع الصور عبر `/api/upload` (حسب الإعدادات)
+- All errors are returned in JSON format with message and status code
 
 ---
 
@@ -76,9 +95,9 @@ BookStore API هو نظام لإدارة المؤلفين والكتب والم�
 
 ---
 
-## ملاحظات
-- يجب إرسال التوكن في الهيدر `Authorization: Bearer <token>` للمسارات المحمية
-- جميع البيانات ترجع بصيغة JSON
+## Notes
+- You must send the token in the header `Authorization: Bearer <token>` for protected routes
+- All responses are in JSON format
 
 ---
 

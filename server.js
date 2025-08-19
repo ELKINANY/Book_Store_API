@@ -8,6 +8,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const path = require('path');
 const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 
 const PORT = process.env.PORT || 7000;
 
@@ -26,6 +27,13 @@ if (process.env.NODE_ENV === "development") {
 
 //helmet
 app.use(helmet());
+
+// Rate limiting
+app.use(rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100
+})
+);
 
 app.use(cors('*'));
 

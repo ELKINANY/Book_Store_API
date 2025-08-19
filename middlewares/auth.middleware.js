@@ -29,7 +29,7 @@ exports.allowedTo = (...roles) =>
     }
     if (!roles.includes(req.user.role)) {
       return next(
-        new ApiError("You are not allowed to access this route", 403)
+        new apiError("You are not allowed to access this route", 403)
       );
     }
     next();
